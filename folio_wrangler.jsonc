@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "folio",
+  "main": "index.js",
+  "compatibility_date": "2026-09-27",
+  "workers_dev": true,
+  "preview_urls": false,
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SEARCH_JOBS",
+        "class_name": "SearchJob"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "SearchJob"
+      ]
+    }
+  ],
+  "vars": {
+    "SOURCE_MODE": "demo"
+  }
+}

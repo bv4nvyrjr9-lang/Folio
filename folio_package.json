@@ -1,0 +1,13 @@
+{
+  "name": "folio-cloudflare",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "check": "node --check index.js && wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}
