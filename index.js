@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 const HTML = `<!doctype html>
 <html lang="es">
 <head>
@@ -13,11 +13,18 @@ const HTML = `<!doctype html>
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.01em}
 button,input,select{font:inherit}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,5vw);border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(245,243,237,.94);backdrop-filter:blur(15px);z-index:10}.brand{font-family:Georgia,serif;font-size:30px;color:var(--ink);text-decoration:none}.brand span{color:var(--accent)}nav{display:flex;gap:18px;align-items:center}.link-btn{border:0;background:transparent;color:var(--ink);cursor:pointer}.pill{border:1px solid var(--ink);border-radius:999px;padding:10px 15px;color:var(--ink);text-decoration:none;font-size:14px}
 main{width:min(1120px,90vw);margin:0 auto}.hero{padding:76px 0 44px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--muted);margin:0 0 14px}.hero h1{font-family:Georgia,serif;font-size:clamp(44px,7vw,78px);line-height:.98;letter-spacing:-.05em;margin:0;max-width:900px;font-weight:500}.hero em{font-weight:400;color:var(--accent)}.lead{font-size:18px;line-height:1.6;color:var(--muted);max-width:760px;margin:28px 0 20px}.status-strip{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(29,93,76,.08)}.demo-badge{font-size:10px;letter-spacing:.12em;font-weight:800;padding:5px 8px;border-radius:999px;border:1px solid #c9a25d;color:#795719;background:#fff9ea;margin-left:6px}
-.search-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.card-head>div{display:flex;gap:12px;align-items:center}.card-head p{font-size:12px;font-weight:800;letter-spacing:.13em;margin:0}.num{font-family:Georgia,serif;font-size:18px;color:var(--accent)}.scope{font-size:12px;color:var(--muted)}.compact{margin-top:2px}.grid.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}label{display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--muted);font-weight:700}select,input{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:15px;color:var(--ink);outline:none}select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,93,76,.09)}.hint{font-size:12px;color:var(--muted);margin:13px 0 0}.divider{height:1px;background:var(--line);margin:28px 0}.tabs{display:flex;gap:8px;margin-bottom:18px}.tab{border:1px solid var(--line);background:transparent;border-radius:999px;padding:10px 14px;cursor:pointer;color:var(--muted)}.tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}.query-label{color:var(--ink)}.query-row{display:grid;grid-template-columns:1fr auto;gap:10px}.primary,.danger{border:0;border-radius:12px;padding:0 22px;cursor:pointer;font-weight:800}.primary{background:var(--accent);color:#fff;min-height:50px}.primary:disabled{opacity:.45;cursor:not-allowed}.danger{border:1px solid #e3b6b2;background:#fff7f6;color:var(--danger);min-height:44px}
+.search-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.card-head>div{display:flex;gap:12px;align-items:center}.card-head p{font-size:12px;font-weight:800;letter-spacing:.13em;margin:0}.num{font-family:Georgia,serif;font-size:18px;color:var(--accent)}.scope{font-size:12px;color:var(--muted)}.compact{margin-top:2px}.grid.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.scope-block{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.scope-group{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}
+.scope-group>span{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:10px}
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f1eee6;border-radius:11px;padding:4px}
+.seg{border:0;background:transparent;color:var(--muted);border-radius:8px;padding:10px 8px;font-size:12px;font-weight:800;cursor:pointer}
+.seg.active{background:#fff;color:var(--ink);box-shadow:0 1px 5px rgba(0,0,0,.08)}
+.field-disabled{opacity:.48;pointer-events:none}label{display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--muted);font-weight:700}select,input{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:15px;color:var(--ink);outline:none}select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,93,76,.09)}.hint{font-size:12px;color:var(--muted);margin:13px 0 0}.divider{height:1px;background:var(--line);margin:28px 0}.tabs{display:flex;gap:8px;margin-bottom:18px}.tab{border:1px solid var(--line);background:transparent;border-radius:999px;padding:10px 14px;cursor:pointer;color:var(--muted)}.tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}.query-label{color:var(--ink)}.query-row{display:grid;grid-template-columns:1fr auto;gap:10px}.primary,.danger{border:0;border-radius:12px;padding:0 22px;cursor:pointer;font-weight:800}.primary{background:var(--accent);color:#fff;min-height:50px}.primary:disabled{opacity:.45;cursor:not-allowed}.danger{border:1px solid #e3b6b2;background:#fff7f6;color:var(--danger);min-height:44px}
 .progress-panel{margin-top:18px;border:1px solid var(--line);border-radius:18px;padding:22px;background:#fff}.hidden{display:none}.progress-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.progress-top h2{font-family:Georgia,serif;font-weight:500;font-size:26px;margin:0}.bar{height:9px;border-radius:999px;background:#ebe8df;overflow:hidden;margin:22px 0 12px}.bar>div{height:100%;width:0;background:var(--accent);transition:width .35s ease}.metrics{display:flex;gap:24px;color:var(--muted);font-size:13px}.metrics span:last-child{margin-left:auto;font-weight:800;color:var(--ink)}
 .results{padding:58px 0 28px}.results-head{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:20px}.results-head h2{font-family:Georgia,serif;font-size:34px;font-weight:500;margin:0}.results-head>span{font-size:13px;color:var(--muted)}.results-list{padding-top:18px}.empty{padding:36px 0 48px;max-width:560px}.empty>span{font-family:Georgia,serif;color:var(--accent);font-size:15px}.empty h3{font-family:Georgia,serif;font-size:28px;font-weight:500;margin:10px 0}.empty p{color:var(--muted);line-height:1.6;margin:0}.result-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:12px;display:grid;grid-template-columns:1.5fr 1fr auto;gap:18px;align-items:center}.result-card h3{font-family:Georgia,serif;font-weight:500;font-size:20px;margin:0 0 8px}.meta{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.result-card .where{font-size:13px;line-height:1.5;color:var(--muted)}.demo-tag{display:inline-flex;font-size:10px;font-weight:900;letter-spacing:.1em;border:1px solid #c9a25d;background:#fff9ea;color:#795719;padding:6px 8px;border-radius:999px}.notice{margin:20px 0 70px;padding:20px;border-left:3px solid var(--accent);background:rgba(255,255,255,.5)}.notice strong{font-size:14px}.notice p{margin:5px 0 0;color:var(--muted);line-height:1.55;font-size:13px}footer{border-top:1px solid var(--line);padding:28px max(24px,5vw) 44px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:12px}footer span{font-family:Georgia,serif;font-size:25px;color:var(--ink)}footer p{max-width:680px;text-align:right}
 dialog{border:1px solid var(--line);border-radius:18px;padding:30px;width:min(560px,90vw);background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.2)}dialog::backdrop{background:rgba(24,32,29,.35);backdrop-filter:blur(4px)}dialog h2{font-family:Georgia,serif;font-size:30px;font-weight:500;margin:0 0 18px}dialog li{margin:10px 0;color:var(--muted);line-height:1.5}.close{float:right;border:0;background:transparent;font-size:28px;cursor:pointer}
-@media(max-width:760px){.topbar{height:66px}.link-btn{display:none}.hero{padding:48px 0 32px}.hero h1{font-size:46px}.lead{font-size:16px}.search-card{padding:20px;border-radius:18px}.grid.two,.query-row{grid-template-columns:1fr}.primary{min-height:52px}.progress-top{flex-direction:column}.danger{width:100%}.metrics{gap:10px;flex-wrap:wrap}.metrics span:last-child{margin-left:0}.result-card{grid-template-columns:1fr}.results-head{align-items:flex-start;gap:15px}.results-head h2{font-size:28px}footer{flex-direction:column}footer p{text-align:left}.tabs{overflow-x:auto;padding-bottom:4px}.tab{white-space:nowrap}}
+@media(max-width:760px){.topbar{height:66px}.link-btn{display:none}.hero{padding:40px 0 28px}.hero h1{font-size:44px}.lead{font-size:16px}.search-card{padding:20px;border-radius:18px}.scope-block,.grid.two,.query-row{grid-template-columns:1fr}.primary{min-height:52px}.progress-top{flex-direction:column}.danger{width:100%}.metrics{gap:10px;flex-wrap:wrap}.metrics span:last-child{margin-left:0}.result-card{grid-template-columns:1fr}.results-head{align-items:flex-start;gap:15px}.results-head h2{font-size:28px}footer{flex-direction:column}footer p{text-align:left}.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.tab{white-space:normal;padding:10px 7px;font-size:11px;line-height:1.15}}
 
 </style>
 </head>
@@ -47,10 +54,27 @@ dialog{border:1px solid var(--line);border-radius:18px;padding:30px;width:min(56
         <span class="scope">23 departamentos</span>
       </div>
 
+      <div class="scope-block">
+        <div class="scope-group">
+          <span>Jurisdicción</span>
+          <div class="segmented">
+            <button type="button" class="seg active" id="allJurBtn">Todas</button>
+            <button type="button" class="seg" id="oneJurBtn">Una específica</button>
+          </div>
+        </div>
+        <div class="scope-group">
+          <span>Juzgados / organismos</span>
+          <div class="segmented">
+            <button type="button" class="seg active" id="allOrgBtn">Todos</button>
+            <button type="button" class="seg" id="oneOrgBtn">Uno específico</button>
+          </div>
+        </div>
+      </div>
+
       <div class="grid two">
-        <label>Departamento judicial
-          <select id="department">
-            <option value="all">Todos los departamentos</option>
+        <label id="departmentField" class="field-disabled">Departamento judicial
+          <select id="department" disabled>
+            <option value="all">Elegí un departamento</option>
             <option>Azul</option><option>Bahía Blanca</option><option>Dolores</option><option>Junín</option><option>La Matanza</option>
             <option>La Plata</option><option>Lomas de Zamora</option><option>Mar del Plata</option><option>Mercedes</option><option>Merlo</option>
             <option>Moreno-General Rodríguez</option><option>Morón</option><option>Necochea</option><option>Pergamino</option><option>Quilmes</option>
@@ -58,11 +82,14 @@ dialog{border:1px solid var(--line);border-radius:18px;padding:30px;width:min(56
             <option>Avellaneda-Lanús</option><option>San Miguel</option><option>Tres Arroyos</option>
           </select>
         </label>
-        <label>Juzgado u organismo
-          <select id="organism"><option value="all">Todos los organismos</option></select>
+
+        <label id="organismField" class="field-disabled">Juzgado u organismo
+          <select id="organism" disabled>
+            <option value="all">Todos los organismos</option>
+          </select>
         </label>
       </div>
-      <p class="hint">La arquitectura ya admite recorrido progresivo, resultados en vivo y cancelación.</p>
+      <p class="hint" id="scopeHint">Se buscará en todos los departamentos y todos los organismos disponibles.</p>
 
       <div class="divider"></div>
       <div class="card-head compact"><div><span class="num">02</span><p>QUÉ BUSCAR</p></div></div>
@@ -138,17 +165,110 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
 
 let searchType = "caption";
+let jurisdictionMode = "all";
+let organismMode = "all";
 let jobId = null;
 let pollTimer = null;
 let lastResultsSignature = "";
 
 const ui = {
   department: $("#department"), organism: $("#organism"), term: $("#term"), searchBtn: $("#searchBtn"),
+  departmentField: $("#departmentField"), organismField: $("#organismField"), scopeHint: $("#scopeHint"),
   progressPanel: $("#progressPanel"), stopBtn: $("#stopBtn"), barFill: $("#barFill"), processed: $("#processed"),
   total: $("#total"), found: $("#found"), percent: $("#percent"), progressTitle: $("#progressTitle"),
   stateLabel: $("#stateLabel"), resultsList: $("#resultsList"), resultCount: $("#resultCount"),
   resultsTitle: $("#resultsTitle"), queryLabel: $("#queryLabel"), demoBadge: $("#demoBadge"), sourceStatus: $("#sourceStatus")
 };
+
+
+const DEMO_ORGANISMS = [
+  "Juzgado Civil y Comercial N.º 1",
+  "Juzgado Civil y Comercial N.º 2",
+  "Juzgado Civil y Comercial N.º 3",
+  "Tribunal del Trabajo N.º 1",
+  "Juzgado Contencioso Administrativo N.º 1"
+];
+
+$("#allJurBtn").addEventListener("click", () => setJurisdictionMode("all"));
+$("#oneJurBtn").addEventListener("click", () => setJurisdictionMode("one"));
+$("#allOrgBtn").addEventListener("click", () => setOrganismMode("all"));
+$("#oneOrgBtn").addEventListener("click", () => setOrganismMode("one"));
+ui.department.addEventListener("change", refreshOrganisms);
+ui.organism.addEventListener("change", updateScopeHint);
+
+function setJurisdictionMode(mode) {
+  jurisdictionMode = mode;
+  $("#allJurBtn").classList.toggle("active", mode === "all");
+  $("#oneJurBtn").classList.toggle("active", mode === "one");
+
+  const specific = mode === "one";
+  ui.department.disabled = !specific;
+  ui.departmentField.classList.toggle("field-disabled", !specific);
+
+  if (!specific) {
+    ui.department.value = "all";
+    if (organismMode === "one") {
+      organismMode = "all";
+      $("#allOrgBtn").classList.add("active");
+      $("#oneOrgBtn").classList.remove("active");
+    }
+  } else if (ui.department.value === "all") {
+    ui.department.selectedIndex = 1;
+  }
+
+  refreshOrganisms();
+  updateScopeHint();
+}
+
+function setOrganismMode(mode) {
+  if (mode === "one" && jurisdictionMode !== "one") {
+    setJurisdictionMode("one");
+  }
+
+  organismMode = mode;
+  $("#allOrgBtn").classList.toggle("active", mode === "all");
+  $("#oneOrgBtn").classList.toggle("active", mode === "one");
+
+  refreshOrganisms();
+  updateScopeHint();
+}
+
+function refreshOrganisms() {
+  if (organismMode !== "one") {
+    ui.organism.innerHTML = '<option value="all">Todos los organismos</option>';
+    ui.organism.value = "all";
+    ui.organism.disabled = true;
+    ui.organismField.classList.add("field-disabled");
+    return;
+  }
+
+  ui.organism.innerHTML = DEMO_ORGANISMS.map(name =>
+    '<option value="' + escapeAttr(name) + '">' + escapeHtml(name) + '</option>'
+  ).join("");
+
+  ui.organism.disabled = false;
+  ui.organismField.classList.remove("field-disabled");
+}
+
+function updateScopeHint() {
+  if (jurisdictionMode === "all") {
+    ui.scopeHint.textContent = "Se buscará en todos los departamentos y todos los organismos disponibles.";
+    return;
+  }
+
+  const jur = ui.department.value === "all" ? "el departamento seleccionado" : ui.department.value;
+
+  if (organismMode === "all") {
+    ui.scopeHint.textContent = "Se buscará en todos los juzgados y organismos de " + jur + ".";
+  } else {
+    ui.scopeHint.textContent = "Se buscará sólo en " + ui.organism.value + " de " + jur + ".";
+  }
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/`/g, "&#96;");
+}
+
 
 $$('.tab').forEach(btn => btn.addEventListener('click', () => {
   $$('.tab').forEach(x => x.classList.remove('active'));
@@ -183,7 +303,7 @@ async function startSearch() {
   try {
     const r = await fetch('/api/jobs', {
       method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ type: searchType, term, department: ui.department.value, organism: ui.organism.value, state: 'active' })
+      body: JSON.stringify({ type: searchType, term, department: jurisdictionMode === "all" ? "all" : ui.department.value, organism: organismMode === "all" ? "all" : ui.organism.value, state: "active" })
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.message || 'No se pudo iniciar la búsqueda');
@@ -290,6 +410,8 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }
 
+setJurisdictionMode("all");
+setOrganismMode("all");
 loadCapabilities();
 
 </script>
