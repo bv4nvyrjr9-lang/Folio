@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 
-const VERSION = "0.6.0";
+const VERSION = "0.7.0";
 const HTML = `<!doctype html>
 <html lang="es">
 <head>
@@ -13,7 +13,7 @@ const HTML = `<!doctype html>
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.01em}
 button,input,select{font:inherit}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,5vw);border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(245,243,237,.94);backdrop-filter:blur(15px);z-index:10}.brand{font-family:Georgia,serif;font-size:30px;color:var(--ink);text-decoration:none}.brand span{color:var(--accent)}nav{display:flex;gap:18px;align-items:center}.link-btn{border:0;background:transparent;color:var(--ink);cursor:pointer}.pill{border:1px solid var(--ink);border-radius:999px;padding:10px 15px;color:var(--ink);text-decoration:none;font-size:14px}
 main{width:min(1120px,90vw);margin:0 auto}.hero{padding:76px 0 44px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--muted);margin:0 0 14px}.hero h1{font-family:Georgia,serif;font-size:clamp(44px,7vw,78px);line-height:.98;letter-spacing:-.05em;margin:0;max-width:900px;font-weight:500}.hero em{font-weight:400;color:var(--accent)}.lead{font-size:18px;line-height:1.6;color:var(--muted);max-width:760px;margin:28px 0 20px}.status-strip{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(29,93,76,.08)}.demo-badge{font-size:10px;letter-spacing:.12em;font-weight:800;padding:5px 8px;border-radius:999px;border:1px solid #c9a25d;color:#795719;background:#fff9ea;margin-left:6px}
-.search-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.card-head>div{display:flex;gap:12px;align-items:center}.card-head p{font-size:12px;font-weight:800;letter-spacing:.13em;margin:0}.num{font-family:Georgia,serif;font-size:18px;color:var(--accent)}.scope{font-size:12px;color:var(--muted)}.compact{margin-top:2px}.grid.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.import-card,.search-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}.import-card{margin-bottom:18px}.import-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.import-top h2{font-family:Georgia,serif;font-size:28px;font-weight:500;margin:3px 0 8px}.import-top p{margin:0;color:var(--muted);line-height:1.55;max-width:720px}.internal-badge{display:inline-flex;border:1px solid #9cbcaf;color:var(--accent);background:#f3faf7;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:900;letter-spacing:.1em;white-space:nowrap}.import-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.secondary{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer;text-decoration:none}.secondary.critical{color:var(--danger)}.real-stats{margin-top:15px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}.real-stats strong{color:var(--ink)}.import-note{font-size:12px;color:var(--muted);line-height:1.5;margin:12px 0 0}.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.card-head>div{display:flex;gap:12px;align-items:center}.card-head p{font-size:12px;font-weight:800;letter-spacing:.13em;margin:0}.num{font-family:Georgia,serif;font-size:18px;color:var(--accent)}.scope{font-size:12px;color:var(--muted)}.compact{margin-top:2px}.grid.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .scope-block{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
 .scope-group{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}
 .scope-group>span{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:10px}
@@ -24,7 +24,7 @@ main{width:min(1120px,90vw);margin:0 auto}.hero{padding:76px 0 44px}.eyebrow{fon
 .progress-panel{margin-top:18px;border:1px solid var(--line);border-radius:18px;padding:22px;background:#fff}.hidden{display:none}.progress-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.progress-top h2{font-family:Georgia,serif;font-weight:500;font-size:26px;margin:0}.bar{height:9px;border-radius:999px;background:#ebe8df;overflow:hidden;margin:22px 0 12px}.bar>div{height:100%;width:0;background:var(--accent);transition:width .35s ease}.metrics{display:flex;gap:24px;color:var(--muted);font-size:13px}.metrics span:last-child{margin-left:auto;font-weight:800;color:var(--ink)}
 .results{padding:58px 0 28px}.results-head{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:20px}.results-head h2{font-family:Georgia,serif;font-size:34px;font-weight:500;margin:0}.results-head>span{font-size:13px;color:var(--muted)}.results-list{padding-top:18px}.empty{padding:36px 0 48px;max-width:560px}.empty>span{font-family:Georgia,serif;color:var(--accent);font-size:15px}.empty h3{font-family:Georgia,serif;font-size:28px;font-weight:500;margin:10px 0}.empty p{color:var(--muted);line-height:1.6;margin:0}.result-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:12px;display:grid;grid-template-columns:1.5fr 1fr auto;gap:18px;align-items:center}.result-card h3{font-family:Georgia,serif;font-weight:500;font-size:20px;margin:0 0 8px}.meta{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.result-card .where{font-size:13px;line-height:1.5;color:var(--muted)}.demo-tag{display:inline-flex;font-size:10px;font-weight:900;letter-spacing:.1em;border:1px solid #c9a25d;background:#fff9ea;color:#795719;padding:6px 8px;border-radius:999px}.notice{margin:20px 0 70px;padding:20px;border-left:3px solid var(--accent);background:rgba(255,255,255,.5)}.notice strong{font-size:14px}.notice p{margin:5px 0 0;color:var(--muted);line-height:1.55;font-size:13px}footer{border-top:1px solid var(--line);padding:28px max(24px,5vw) 44px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:12px}footer span{font-family:Georgia,serif;font-size:25px;color:var(--ink)}footer p{max-width:680px;text-align:right}
 dialog{border:1px solid var(--line);border-radius:18px;padding:30px;width:min(560px,90vw);background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.2)}dialog::backdrop{background:rgba(24,32,29,.35);backdrop-filter:blur(4px)}dialog h2{font-family:Georgia,serif;font-size:30px;font-weight:500;margin:0 0 18px}dialog li{margin:10px 0;color:var(--muted);line-height:1.5}.close{float:right;border:0;background:transparent;font-size:28px;cursor:pointer}
-@media(max-width:760px){.topbar{height:66px}.link-btn{display:none}.hero{padding:40px 0 28px}.hero h1{font-size:44px}.lead{font-size:16px}.search-card{padding:20px;border-radius:18px}.scope-block,.grid.two,.query-row{grid-template-columns:1fr}.primary{min-height:52px}.progress-top{flex-direction:column}.danger{width:100%}.metrics{gap:10px;flex-wrap:wrap}.metrics span:last-child{margin-left:0}.result-card{grid-template-columns:1fr}.results-head{align-items:flex-start;gap:15px}.results-head h2{font-size:28px}footer{flex-direction:column}footer p{text-align:left}.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.tab{white-space:normal;padding:10px 7px;font-size:11px;line-height:1.15}}
+@media(max-width:760px){.topbar{height:66px}.link-btn{display:none}.hero{padding:40px 0 28px}.hero h1{font-size:44px}.lead{font-size:16px}.import-card,.search-card{padding:20px;border-radius:18px}.import-top{flex-direction:column}.scope-block,.grid.two,.query-row{grid-template-columns:1fr}.primary{min-height:52px}.progress-top{flex-direction:column}.danger{width:100%}.metrics{gap:10px;flex-wrap:wrap}.metrics span:last-child{margin-left:0}.result-card{grid-template-columns:1fr}.results-head{align-items:flex-start;gap:15px}.results-head h2{font-size:28px}footer{flex-direction:column}footer p{text-align:left}.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.tab{white-space:normal;padding:10px 7px;font-size:11px;line-height:1.15}}
 
 </style>
 </head>
@@ -41,10 +41,32 @@ dialog{border:1px solid var(--line);border-radius:18px;padding:30px;width:min(56
     <section class="hero">
       <p class="eyebrow">PROVINCIA DE BUENOS AIRES</p>
       <h1>Encontrá el expediente.<br><em>Sin perderte en el camino.</em></h1>
-      <p class="lead">Folio organiza la consulta judicial en una sola pantalla. Folio ya tiene preparado el motor de búsqueda progresiva. Los datos reales se conectarán únicamente mediante una fuente oficial o integración autorizada por la SCBA.</p>
+      <p class="lead">Folio organiza la consulta judicial en una sola pantalla. En esta versión de prueba interna podés trabajar con resultados reales que vos mismo importás desde una sesión abierta de MEV, sin entregar tu contraseña a Folio.</p>
       <div class="status-strip">
-        <span class="dot"></span><span id="sourceStatus">Motor de búsqueda listo</span>
-        <span class="demo-badge" id="demoBadge">MODO DEMO</span>
+        <span class="dot"></span><span id="sourceStatus">Esperando datos reales de MEV</span>
+        <span class="demo-badge" id="demoBadge">PRUEBA INTERNA</span>
+      </div>
+    </section>
+
+    <section class="import-card" aria-labelledby="importTitle">
+      <div class="import-top">
+        <div>
+          <p class="eyebrow">FUENTE REAL · PRUEBA INTERNA</p>
+          <h2 id="importTitle">Traé resultados reales desde MEV.</h2>
+          <p>Entrás a MEV normalmente, hacés la búsqueda y ejecutás el importador sobre la página de resultados. Folio recibe solamente el contenido visible de esa página; no copia cookies, usuario ni contraseña.</p>
+        </div>
+        <span class="internal-badge">MEV MANUAL</span>
+      </div>
+      <div class="import-actions">
+        <a class="secondary" href="https://mev.scba.gov.ar/loguin.asp" target="_blank" rel="noopener">1. Abrir MEV ↗</a>
+        <button type="button" class="secondary" id="copyImporterBtn">2. Copiar importador</button>
+        <button type="button" class="secondary critical" id="clearRealBtn">Vaciar datos importados</button>
+      </div>
+      <p class="import-note">En iPhone: guardá cualquier página como marcador, editá ese marcador y reemplazá su dirección por el código que copia “Copiar importador”. Después, estando en los resultados de MEV, tocá ese marcador.</p>
+      <div class="real-stats">
+        <span><strong id="realCount">0</strong> filas reales guardadas</span>
+        <span><strong id="importCount">0</strong> importaciones</span>
+        <span id="lastImport">Sin importaciones todavía</span>
       </div>
     </section>
 
@@ -170,6 +192,12 @@ let organismMode = "all";
 let jobId = null;
 let pollTimer = null;
 let lastResultsSignature = "";
+let realScan = null;
+const REAL_STORE_KEY = "folio_mev_real_v1";
+const REAL_IMPORTS_KEY = "folio_mev_imports_v1";
+const PENDING_IMPORT_KEY = "folio_mev_pending_v1";
+let realRecords = loadJson(REAL_STORE_KEY, []);
+let realImports = loadJson(REAL_IMPORTS_KEY, []);
 
 const ui = {
   department: $("#department"), organism: $("#organism"), term: $("#term"), searchBtn: $("#searchBtn"),
@@ -177,17 +205,29 @@ const ui = {
   progressPanel: $("#progressPanel"), stopBtn: $("#stopBtn"), barFill: $("#barFill"), processed: $("#processed"),
   total: $("#total"), found: $("#found"), percent: $("#percent"), progressTitle: $("#progressTitle"),
   stateLabel: $("#stateLabel"), resultsList: $("#resultsList"), resultCount: $("#resultCount"),
-  resultsTitle: $("#resultsTitle"), queryLabel: $("#queryLabel"), demoBadge: $("#demoBadge"), sourceStatus: $("#sourceStatus")
+  resultsTitle: $("#resultsTitle"), queryLabel: $("#queryLabel"), demoBadge: $("#demoBadge"), sourceStatus: $("#sourceStatus"),
+  realCount: $("#realCount"), importCount: $("#importCount"), lastImport: $("#lastImport")
 };
 
 
-const DEMO_ORGANISMS = [
-  "Juzgado Civil y Comercial N.º 1",
-  "Juzgado Civil y Comercial N.º 2",
-  "Juzgado Civil y Comercial N.º 3",
-  "Tribunal del Trabajo N.º 1",
-  "Juzgado Contencioso Administrativo N.º 1"
-];
+function loadJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || "") || fallback; }
+  catch (_) { return fallback; }
+}
+
+function saveRealStore() {
+  localStorage.setItem(REAL_STORE_KEY, JSON.stringify(realRecords));
+  localStorage.setItem(REAL_IMPORTS_KEY, JSON.stringify(realImports));
+  updateRealStats();
+}
+
+function normalizeKey(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function uniqueValues(values) {
+  return [...new Set(values.map(v => String(v || "").trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b, "es"));
+}
 
 $("#allJurBtn").addEventListener("click", () => setJurisdictionMode("all"));
 $("#oneJurBtn").addEventListener("click", () => setJurisdictionMode("one"));
@@ -239,15 +279,27 @@ function refreshOrganisms() {
     ui.organism.value = "all";
     ui.organism.disabled = true;
     ui.organismField.classList.add("field-disabled");
+    updateScopeHint();
     return;
   }
 
-  ui.organism.innerHTML = DEMO_ORGANISMS.map(name =>
-    '<option value="' + escapeAttr(name) + '">' + escapeHtml(name) + '</option>'
-  ).join("");
+  const dep = jurisdictionMode === "one" ? ui.department.value : "all";
+  const names = uniqueValues(realRecords
+    .filter(r => dep === "all" || normalizeKey(r.department) === normalizeKey(dep))
+    .map(r => r.organism));
 
-  ui.organism.disabled = false;
-  ui.organismField.classList.remove("field-disabled");
+  if (!names.length) {
+    ui.organism.innerHTML = '<option value="all">No hay organismos importados</option>';
+    ui.organism.disabled = true;
+    ui.organismField.classList.add("field-disabled");
+  } else {
+    ui.organism.innerHTML = names.map(name =>
+      '<option value="' + escapeAttr(name) + '">' + escapeHtml(name) + '</option>'
+    ).join("");
+    ui.organism.disabled = false;
+    ui.organismField.classList.remove("field-disabled");
+  }
+  updateScopeHint();
 }
 
 function updateScopeHint() {
@@ -269,6 +321,181 @@ function escapeAttr(value) {
   return escapeHtml(value).replace(/`/g, "&#96;");
 }
 
+
+
+$("#copyImporterBtn").addEventListener("click", async () => {
+  const bookmarklet = buildImporterBookmarklet();
+  try {
+    await navigator.clipboard.writeText(bookmarklet);
+    $("#copyImporterBtn").textContent = "Copiado ✓";
+    setTimeout(() => $("#copyImporterBtn").textContent = "2. Copiar importador", 1800);
+  } catch (_) {
+    prompt("Copiá este código completo y usalo como dirección del marcador:", bookmarklet);
+  }
+});
+
+$("#clearRealBtn").addEventListener("click", () => {
+  if (!confirm("¿Vaciar todos los datos reales importados de este navegador?")) return;
+  realRecords = [];
+  realImports = [];
+  localStorage.removeItem(REAL_STORE_KEY);
+  localStorage.removeItem(REAL_IMPORTS_KEY);
+  updateRealStats();
+  refreshOrganisms();
+  resetResults();
+});
+
+function buildImporterBookmarklet() {
+  const endpoint = location.origin + "/import";
+  const departments = ["Azul","Bahía Blanca","Dolores","Junín","La Matanza","La Plata","Lomas de Zamora","Mar del Plata","Mercedes","Merlo","Moreno-General Rodríguez","Morón","Necochea","Pergamino","Quilmes","San Isidro","San Martín","San Nicolás","Trenque Lauquen","Zárate-Campana","Avellaneda-Lanús","San Miguel","Tres Arroyos"];
+  const js = `(function(){try{
+var clean=function(s){return String(s||"").replace(/\\s+/g," ").trim()};
+var rows=[].slice.call(document.querySelectorAll("tr")).map(function(tr,i){
+  var cells=[].slice.call(tr.querySelectorAll("th,td")).map(function(x){return clean(x.innerText)}).filter(Boolean);
+  return {i:i,cells:cells,text:clean(tr.innerText)};
+}).filter(function(r){return r.text.length>20});
+var sels=[].slice.call(document.querySelectorAll("select")).map(function(s){
+  return {name:s.name||s.id||"",text:(s.options&&s.selectedIndex>=0)?clean(s.options[s.selectedIndex].text):"",value:s.value||""};
+});
+var body=clean(document.body.innerText);
+var depts=${JSON.stringify(departments)};
+var department=depts.find(function(d){return body.indexOf(d)>=0})||"";
+var organism=(sels.map(function(x){return x.text}).find(function(t){return /(Juzgado|Tribunal|Cámara|Camara|Organismo)/i.test(t)})||"");
+var mt=body.match(/Total\\s+Expedientes\\s*:\\s*(\\d+)/i);
+var total=mt?Number(mt[1]):null;
+var limited=/exceden\\s+el\\s+l[ií]mite\\s+permitido\\s*:\\s*1000/i.test(body);
+var data={ts:Date.now(),url:location.href,title:document.title,department:department,organism:organism,total:total,limited:limited,rows:rows,selects:sels};
+var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+var f=document.createElement("form");f.method="POST";f.action=${JSON.stringify(endpoint)};f.target="_blank";
+var input=document.createElement("input");input.type="hidden";input.name="payload";input.value=encoded;f.appendChild(input);
+document.body.appendChild(f);f.submit();f.remove();
+}catch(e){alert("Folio: no se pudo importar esta página. "+e.message)}})();`;
+  return "javascript:" + js.replace(/\n+/g, "");
+}
+
+function decodeBase64Utf8(value) {
+  return decodeURIComponent(escape(atob(value)));
+}
+
+function consumePendingImport() {
+  const encoded = localStorage.getItem(PENDING_IMPORT_KEY);
+  if (!encoded) return;
+  localStorage.removeItem(PENDING_IMPORT_KEY);
+
+  try {
+    const payload = JSON.parse(decodeBase64Utf8(encoded));
+    const normalized = normalizeImportedPayload(payload);
+    if (!normalized.records.length) {
+      alert("Folio recibió la página, pero todavía no pudo identificar filas de expedientes.");
+      return;
+    }
+
+    const before = realRecords.length;
+    const index = new Map(realRecords.map(r => [r.fingerprint, r]));
+    normalized.records.forEach(r => index.set(r.fingerprint, r));
+    realRecords = [...index.values()];
+    realImports.push(normalized.meta);
+    if (realImports.length > 100) realImports = realImports.slice(-100);
+    saveRealStore();
+    refreshOrganisms();
+
+    const added = Math.max(0, realRecords.length - before);
+    const cap = normalized.meta.limited ? " MEV informó que la búsqueda superó el límite de 1000." : "";
+    alert("Importación real recibida: " + normalized.records.length + " filas detectadas, " + added + " nuevas." + cap);
+  } catch (err) {
+    alert("Folio no pudo leer la importación: " + err.message);
+  }
+}
+
+function normalizeImportedPayload(payload) {
+  const rows = Array.isArray(payload.rows) ? payload.rows : [];
+  const department = String(payload.department || "");
+  const organism = String(payload.organism || "");
+
+  const skip = /(Nueva Búsqueda|Organizar Mis Sets|Cambiar Jurisdicción|Desconectarse|Total Expedientes|Expresión de búsqueda|Búsqueda por Carátula|Búsqueda por Set|Estado del Expediente)/i;
+  const statuses = ["EN LETRA","ARCHIVADA","PARALIZADA","A DESPACHO","FUERA DEL ORGANISMO"];
+
+  const records = rows.map((row, idx) => {
+    const cells = Array.isArray(row.cells) ? row.cells.map(x => String(x || "").trim()).filter(Boolean) : [];
+    const text = String(row.text || cells.join(" ")).replace(/\s+/g, " ").trim();
+    if (text.length < 28 || skip.test(text)) return null;
+
+    const upper = text.toUpperCase();
+    const status = statuses.find(s => upper.includes(s)) || "";
+    const date = (text.match(/\b\d{2}\/\d{2}\/\d{4}\b/) || [""])[0];
+    const ids = [...text.matchAll(/\b[A-Z]{1,4}\s*-\s*\d{1,7}\s*-\s*\d{4}\b/g)].map(m => m[0]);
+
+    let caption = cells.find(c =>
+      c.length > 18 &&
+      !statuses.includes(c.toUpperCase()) &&
+      !/^\d{2}\/\d{2}\/\d{4}$/.test(c) &&
+      !/^SI\s*-\s*\d+/i.test(c)
+    ) || text;
+
+    if (status && caption.toUpperCase().includes(status)) {
+      caption = caption.slice(0, caption.toUpperCase().indexOf(status)).trim() || caption;
+    }
+    caption = caption.replace(/^\s*[□☐○]\s*/, "").trim();
+
+    const afterDate = date && text.indexOf(date) >= 0 ? text.slice(text.indexOf(date) + date.length).trim() : "";
+    const fingerprint = normalizeKey([department, organism, ids[0] || "", caption].join("|"));
+
+    return {
+      id: "mev-" + Math.abs(hashString(fingerprint || text + idx)),
+      fingerprint,
+      source: "mev-import",
+      demo: false,
+      caption: caption.slice(0, 240),
+      caseNumber: ids[0] || "",
+      receptoria: ids[1] || "",
+      department,
+      organism,
+      status: status || "MEV",
+      lastAction: afterDate || (date ? "Última fecha visible: " + date : "Dato importado desde la página visible de MEV."),
+      lastDate: date,
+      raw: text,
+      importedAt: Number(payload.ts || Date.now())
+    };
+  }).filter(Boolean);
+
+  return {
+    records,
+    meta: {
+      importedAt: Number(payload.ts || Date.now()),
+      department,
+      organism,
+      sourceUrl: String(payload.url || ""),
+      pageTitle: String(payload.title || ""),
+      reportedTotal: payload.total == null ? null : Number(payload.total),
+      limited: Boolean(payload.limited),
+      rowsReceived: rows.length,
+      rowsDetected: records.length
+    }
+  };
+}
+
+function hashString(value) {
+  let h = 0;
+  for (let i = 0; i < value.length; i++) h = ((h << 5) - h + value.charCodeAt(i)) | 0;
+  return h;
+}
+
+function updateRealStats() {
+  ui.realCount.textContent = String(realRecords.length);
+  ui.importCount.textContent = String(realImports.length);
+  if (realImports.length) {
+    const last = realImports[realImports.length - 1];
+    const where = [last.department, last.organism].filter(Boolean).join(" · ");
+    const total = last.reportedTotal ? " · MEV informó " + last.reportedTotal + " expedientes" : "";
+    ui.lastImport.textContent = "Última: " + new Date(last.importedAt).toLocaleString("es-AR") + (where ? " · " + where : "") + total;
+    ui.sourceStatus.textContent = "Datos reales de MEV cargados en este navegador";
+    ui.demoBadge.textContent = "MEV REAL";
+  } else {
+    ui.lastImport.textContent = "Sin importaciones todavía";
+    ui.sourceStatus.textContent = "Esperando datos reales de MEV";
+    ui.demoBadge.textContent = "PRUEBA INTERNA";
+  }
+}
 
 $$('.tab').forEach(btn => btn.addEventListener('click', () => {
   $$('.tab').forEach(x => x.classList.remove('active'));
@@ -293,26 +520,81 @@ $("#closeHow").addEventListener('click', () => $("#howDialog").close());
 async function startSearch() {
   const term = ui.term.value.trim();
   if (!term) { ui.term.focus(); return; }
+  if (!realRecords.length) {
+    showError("Primero importá al menos una página real de resultados desde MEV.");
+    return;
+  }
+
   resetResults();
   ui.searchBtn.disabled = true;
-  ui.progressPanel.classList.remove('hidden');
+  ui.progressPanel.classList.remove("hidden");
   ui.stopBtn.disabled = false;
-  ui.stateLabel.textContent = 'BUSCANDO';
-  ui.progressTitle.textContent = 'Creando cola de organismos…';
+  ui.stateLabel.textContent = "BUSCANDO";
+  ui.progressTitle.textContent = "Buscando en los datos reales importados de MEV…";
 
-  try {
-    const r = await fetch('/api/jobs', {
-      method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ type: searchType, term, department: jurisdictionMode === "all" ? "all" : ui.department.value, organism: organismMode === "all" ? "all" : ui.organism.value, state: "active" })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.message || 'No se pudo iniciar la búsqueda');
-    jobId = data.id;
-    renderJob(data);
-    schedulePoll(220);
-  } catch (err) {
-    showError(err.message);
+  const dep = jurisdictionMode === "all" ? null : ui.department.value;
+  const org = organismMode === "all" ? null : ui.organism.value;
+
+  const candidates = realRecords.filter(r => {
+    if (dep && normalizeKey(r.department) !== normalizeKey(dep)) return false;
+    if (org && normalizeKey(r.organism) !== normalizeKey(org)) return false;
+    return true;
+  });
+
+  realScan = {
+    term: normalizeKey(term),
+    type: searchType,
+    items: candidates,
+    index: 0,
+    results: [],
+    cancelled: false
+  };
+
+  ui.total.textContent = String(candidates.length);
+  ui.processed.textContent = "0";
+  ui.found.textContent = "0";
+  ui.percent.textContent = "0%";
+  ui.barFill.style.width = "0%";
+
+  scanRealChunk();
+}
+
+function scanRealChunk() {
+  if (!realScan || realScan.cancelled) return;
+  const chunkSize = 40;
+  const end = Math.min(realScan.index + chunkSize, realScan.items.length);
+
+  for (; realScan.index < end; realScan.index++) {
+    const r = realScan.items[realScan.index];
+    let haystack = "";
+    if (realScan.type === "case") haystack = r.caseNumber + " " + r.raw;
+    else if (realScan.type === "receptoria") haystack = r.receptoria + " " + r.raw;
+    else haystack = r.caption + " " + r.raw;
+
+    if (normalizeKey(haystack).includes(realScan.term)) realScan.results.push(r);
+  }
+
+  const processed = realScan.index;
+  const total = realScan.items.length;
+  const progress = total ? Math.round((processed / total) * 100) : 100;
+
+  ui.processed.textContent = String(processed);
+  ui.total.textContent = String(total);
+  ui.found.textContent = String(realScan.results.length);
+  ui.percent.textContent = progress + "%";
+  ui.barFill.style.width = progress + "%";
+  ui.progressTitle.textContent = total ? "Revisando expedientes reales importados…" : "No hay datos importados para ese alcance.";
+  renderResults(realScan.results);
+
+  if (processed < total) {
+    setTimeout(scanRealChunk, 35);
+  } else {
+    ui.stateLabel.textContent = "FINALIZADA";
+    ui.progressTitle.textContent = "Búsqueda finalizada sobre datos reales importados de MEV.";
     ui.searchBtn.disabled = false;
+    ui.stopBtn.disabled = true;
+    ui.resultsTitle.textContent = "Búsqueda finalizada.";
+    realScan = null;
   }
 }
 
@@ -337,10 +619,21 @@ function schedulePoll(ms) {
 }
 
 async function stopSearch() {
+  if (realScan) {
+    realScan.cancelled = true;
+    ui.stopBtn.disabled = true;
+    ui.searchBtn.disabled = false;
+    ui.stateLabel.textContent = "DETENIDA";
+    ui.progressTitle.textContent = "Búsqueda detenida. Se conserva lo encontrado.";
+    ui.resultsTitle.textContent = "Búsqueda detenida: conservamos lo encontrado.";
+    realScan = null;
+    return;
+  }
+
   if (!jobId) return;
   ui.stopBtn.disabled = true;
   clearTimeout(pollTimer);
-  const r = await fetch(\`/api/jobs/\${jobId}/cancel\`, { method: 'POST' });
+  const r = await fetch(`/api/jobs/${jobId}/cancel`, { method: "POST" });
   const data = await r.json();
   renderJob(data);
   finish(data);
@@ -371,7 +664,7 @@ function renderResults(results) {
         <div class="meta"><span>\${escapeHtml(r.caseNumber)}</span><span>\${escapeHtml(r.receptoria)}</span><span>\${escapeHtml(r.status)}</span></div>
       </div>
       <div class="where"><strong>\${escapeHtml(r.department)}</strong><br>\${escapeHtml(r.organism)}<br>\${escapeHtml(r.lastAction)}</div>
-      \${r.demo ? '<span class="demo-tag">DEMO</span>' : ''}
+      \${r.demo ? '<span class="demo-tag">DEMO</span>' : '<span class="demo-tag">MEV REAL</span>'}
     </article>\`).join('');
 }
 
@@ -398,18 +691,14 @@ function showError(message) {
 }
 
 async function loadCapabilities() {
-  try {
-    const r = await fetch('/api/capabilities');
-    const c = await r.json();
-    ui.demoBadge.hidden = c.sourceMode !== 'demo';
-    ui.sourceStatus.textContent = c.sourceMode === 'demo' ? 'Motor listo · fuente real pendiente de autorización' : 'Fuente autorizada conectada';
-  } catch (_) {}
+  updateRealStats();
 }
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }
 
+consumePendingImport();
 setJurisdictionMode("all");
 setOrganismMode("all");
 loadCapabilities();
@@ -472,6 +761,28 @@ export default {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") return new Response(null, { headers: cors });
 
+    if (url.pathname === "/import" && request.method === "POST") {
+      const form = await request.formData().catch(() => null);
+      const payload = String(form?.get("payload") || "");
+      if (!/^[A-Za-z0-9+/=]+$/.test(payload) || payload.length > 1800000) {
+        return new Response("Importación inválida o demasiado grande.", {
+          status: 400,
+          headers: { "content-type": "text/plain; charset=utf-8" }
+        });
+      }
+
+      const safePayload = JSON.stringify(payload);
+      const importPage = `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Importando a Folio</title></head><body><p>Importando resultados reales a Folio…</p><script>try{localStorage.setItem("folio_mev_pending_v1",${safePayload});location.replace("/?import=1")}catch(e){document.body.innerHTML="<p>No se pudo guardar la importación.</p>"}</script></body></html>`;
+      return new Response(importPage, {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff"
+        }
+      });
+    }
+
     if (!url.pathname.startsWith("/api/")) {
       return new Response(HTML, {
         status: 200,
@@ -504,7 +815,7 @@ export default {
         source,
         mevAutomation: false,
         expectedWorkersDevUrl: "https://folio.desarrollarg.workers.dev",
-        reason: "Folio no automatiza cuentas humanas de MEV. La fuente real se habilitará únicamente mediante una vía oficial o autorización de integración."
+        reason: "La versión interna admite importación manual de la página visible de resultados de MEV. No automatiza el inicio de sesión ni almacena credenciales."
       }, 200, cors);
     }
 
@@ -514,7 +825,7 @@ export default {
         allowedModes: ["demo"],
         mevCredentialsAccepted: false,
         externalAutomationEnabled: false,
-        note: "No enviar credenciales MEV a Folio."
+        note: "No enviar credenciales MEV a Folio. La prueba real utiliza importación manual de resultados visibles."
       }, 200, cors);
     }
 
