@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 
-const VERSION = "0.7.0";
+const VERSION = "0.7.1";
 const HTML = `<!doctype html>
 <html lang="es">
 <head>
@@ -318,7 +318,7 @@ function updateScopeHint() {
 }
 
 function escapeAttr(value) {
-  return escapeHtml(value).replace(/`/g, "&#96;");
+  return escapeHtml(value);
 }
 
 
@@ -348,29 +348,70 @@ $("#clearRealBtn").addEventListener("click", () => {
 function buildImporterBookmarklet() {
   const endpoint = location.origin + "/import";
   const departments = ["Azul","Bahía Blanca","Dolores","Junín","La Matanza","La Plata","Lomas de Zamora","Mar del Plata","Mercedes","Merlo","Moreno-General Rodríguez","Morón","Necochea","Pergamino","Quilmes","San Isidro","San Martín","San Nicolás","Trenque Lauquen","Zárate-Campana","Avellaneda-Lanús","San Miguel","Tres Arroyos"];
-  const js = `(function(){try{
-var clean=function(s){return String(s||"").replace(/\\s+/g," ").trim()};
-var rows=[].slice.call(document.querySelectorAll("tr")).map(function(tr,i){
-  var cells=[].slice.call(tr.querySelectorAll("th,td")).map(function(x){return clean(x.innerText)}).filter(Boolean);
-  return {i:i,cells:cells,text:clean(tr.innerText)};
-}).filter(function(r){return r.text.length>20});
-var sels=[].slice.call(document.querySelectorAll("select")).map(function(s){
-  return {name:s.name||s.id||"",text:(s.options&&s.selectedIndex>=0)?clean(s.options[s.selectedIndex].text):"",value:s.value||""};
-});
-var body=clean(document.body.innerText);
-var depts=${JSON.stringify(departments)};
-var department=depts.find(function(d){return body.indexOf(d)>=0})||"";
-var organism=(sels.map(function(x){return x.text}).find(function(t){return /(Juzgado|Tribunal|Cámara|Camara|Organismo)/i.test(t)})||"");
-var mt=body.match(/Total\\s+Expedientes\\s*:\\s*(\\d+)/i);
-var total=mt?Number(mt[1]):null;
-var limited=/exceden\\s+el\\s+l[ií]mite\\s+permitido\\s*:\\s*1000/i.test(body);
-var data={ts:Date.now(),url:location.href,title:document.title,department:department,organism:organism,total:total,limited:limited,rows:rows,selects:sels};
-var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-var f=document.createElement("form");f.method="POST";f.action=${JSON.stringify(endpoint)};f.target="_blank";
-var input=document.createElement("input");input.type="hidden";input.name="payload";input.value=encoded;f.appendChild(input);
-document.body.appendChild(f);f.submit();f.remove();
-}catch(e){alert("Folio: no se pudo importar esta página. "+e.message)}})();`;
-  return "javascript:" + js.replace(/\n+/g, "");
+
+  function importerRunner(endpoint, departments) {
+    try {
+      var clean = function(s) { return String(s || "").replace(/\s+/g, " ").trim(); };
+
+      var rows = [].slice.call(document.querySelectorAll("tr")).map(function(tr, i) {
+        var cells = [].slice.call(tr.querySelectorAll("th,td")).map(function(x) {
+          return clean(x.innerText);
+        }).filter(Boolean);
+        return { i: i, cells: cells, text: clean(tr.innerText) };
+      }).filter(function(r) { return r.text.length > 20; });
+
+      var sels = [].slice.call(document.querySelectorAll("select")).map(function(sel) {
+        return {
+          name: sel.name || sel.id || "",
+          text: (sel.options && sel.selectedIndex >= 0) ? clean(sel.options[sel.selectedIndex].text) : "",
+          value: sel.value || ""
+        };
+      });
+
+      var body = clean(document.body.innerText);
+      var department = departments.find(function(d) { return body.indexOf(d) >= 0; }) || "";
+      var organism = sels.map(function(x) { return x.text; }).find(function(t) {
+        return /(Juzgado|Tribunal|Cámara|Camara|Organismo)/i.test(t);
+      }) || "";
+
+      var mt = body.match(/Total\s+Expedientes\s*:\s*(\d+)/i);
+      var total = mt ? Number(mt[1]) : null;
+      var limited = /exceden\s+el\s+l[ií]mite\s+permitido\s*:\s*1000/i.test(body);
+
+      var data = {
+        ts: Date.now(),
+        url: location.href,
+        title: document.title,
+        department: department,
+        organism: organism,
+        total: total,
+        limited: limited,
+        rows: rows,
+        selects: sels
+      };
+
+      var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+      var form = document.createElement("form");
+      form.method = "POST";
+      form.action = endpoint;
+      form.target = "_blank";
+
+      var input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "payload";
+      input.value = encoded;
+      form.appendChild(input);
+
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
+    } catch (e) {
+      alert("Folio: no se pudo importar esta página. " + e.message);
+    }
+  }
+
+  return "javascript:(" + importerRunner.toString() + ")(" +
+    JSON.stringify(endpoint) + "," + JSON.stringify(departments) + ");";
 }
 
 function decodeBase64Utf8(value) {
@@ -633,7 +674,7 @@ async function stopSearch() {
   if (!jobId) return;
   ui.stopBtn.disabled = true;
   clearTimeout(pollTimer);
-  const r = await fetch(`/api/jobs/${jobId}/cancel`, { method: "POST" });
+  const r = await fetch("/api/jobs/" + jobId + "/cancel", { method: "POST" });
   const data = await r.json();
   renderJob(data);
   finish(data);
