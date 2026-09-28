@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 
-const VERSION = "0.7.1";
+const VERSION = "0.7.2";
 const HTML = `<!doctype html>
 <html lang="es">
 <head>
@@ -167,7 +167,7 @@ dialog{border:1px solid var(--line);border-radius:18px;padding:30px;width:min(56
 
   <footer>
     <span>folio.</span>
-    <p>Herramienta independiente · No es un sitio oficial de la SCBA · Los resultados demo están identificados expresamente.</p>
+    <p>Herramienta independiente · No es un sitio oficial de la SCBA · Los datos reales se incorporan manualmente desde una sesión abierta de MEV.</p>
   </footer>
 
   <dialog id="howDialog">
@@ -757,27 +757,14 @@ const DEPARTMENTS = [
   "San Miguel", "Tres Arroyos"
 ];
 
-const demoSource = {
-  id: "demo",
-  label: "Demostración",
-  authorized: true,
-  async searchTarget({ job, target, index }) {
-    if (!shouldAddDemoResult(job.query.term, index)) return [];
-    return [demoResult(job, target, index)];
-  }
-};
-
-function getSource(mode) {
-  return mode === "demo" ? demoSource : null;
-}
-
-function sourceCapabilities(mode) {
-  const source = getSource(mode);
+function sourceCapabilities() {
   return {
-    mode,
-    available: Boolean(source),
-    authorized: Boolean(source?.authorized),
-    label: source?.label || "No configurado"
+    mode: "mev-import",
+    available: true,
+    authorized: true,
+    label: "MEV · importación manual",
+    transport: "manual-browser-import",
+    credentialsStored: false
   };
 }
 
@@ -835,19 +822,19 @@ export default {
       });
     }
 
-    const sourceMode = env.SOURCE_MODE || "demo";
+    const sourceMode = "mev-import";
 
     if (url.pathname === "/api/health") {
       return jsonResponse({
         ok: true,
         service: "folio",
         version: VERSION,
-        source: sourceCapabilities(sourceMode)
+        source: sourceCapabilities()
       }, 200, cors);
     }
 
     if (url.pathname === "/api/capabilities") {
-      const source = sourceCapabilities(sourceMode);
+      const source = sourceCapabilities();
       return jsonResponse({
         progressiveSearch: true,
         cancelSearch: true,
@@ -863,7 +850,7 @@ export default {
     if (url.pathname === "/api/source-policy") {
       return jsonResponse({
         current: sourceMode,
-        allowedModes: ["demo"],
+        allowedModes: ["mev-import"],
         mevCredentialsAccepted: false,
         externalAutomationEnabled: false,
         note: "No enviar credenciales MEV a Folio. La prueba real utiliza importación manual de resultados visibles."
@@ -871,21 +858,10 @@ export default {
     }
 
     if (url.pathname === "/api/jobs" && request.method === "POST") {
-      const source = getSource(sourceMode);
-      if (!source) {
-        return jsonResponse({ error: "source_unavailable", message: "No hay una fuente de datos habilitada." }, 503, cors);
-      }
-
-      const body = await request.json().catch(() => ({}));
-      const id = crypto.randomUUID();
-      const stub = env.SEARCH_JOBS.get(env.SEARCH_JOBS.idFromName(id));
-      const response = await stub.fetch("https://job/create", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...body, id, sourceMode })
-      });
-      const payload = await response.json();
-      return jsonResponse(payload, response.status, cors);
+      return jsonResponse({
+        error: "legacy_endpoint_disabled",
+        message: "La versión interna busca exclusivamente sobre datos reales importados manualmente desde MEV."
+      }, 410, cors);
     }
 
     const m = url.pathname.match(/^\/api\/jobs\/([a-f0-9-]+)(?:\/(cancel))?$/i);
